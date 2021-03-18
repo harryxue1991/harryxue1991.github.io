@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="在开发过程中，我们需要开发一个组织结构图，也就是我们常见的tree功能。首先遇到这样的需求，我首先想到的是利用插件 ztree，这是一款比较著名的jquery插件，只要后台返回的数据ok，它就能渲染，然后只需修改样式即可。 处理后台数据首先，我的理想的数据是下面这样的：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="处理树形数据和递归组件">
+<meta property="og:url" content="http://example.com/2017/06/28/%E5%A4%84%E7%90%86%E6%A0%91%E5%BD%A2%E6%95%B0%E6%8D%AE%E5%92%8C%E9%80%92%E5%BD%92%E7%BB%84%E4%BB%B6/index.html">
+<meta property="og:site_name" content="尖叫蕈的梦">
+<meta property="og:description" content="在开发过程中，我们需要开发一个组织结构图，也就是我们常见的tree功能。首先遇到这样的需求，我首先想到的是利用插件 ztree，这是一款比较著名的jquery插件，只要后台返回的数据ok，它就能渲染，然后只需修改样式即可。 处理后台数据首先，我的理想的数据是下面这样的：">
+<meta property="og:locale">
+<meta property="og:image" content="http://example.com/images/tree/tree_1.png">
+<meta property="og:image" content="http://example.com/images/tree/tree_2.png">
+<meta property="og:image" content="http://example.com/images/tree/tree_3.png">
+<meta property="article:published_time" content="2017-06-28T02:09:58.000Z">
+<meta property="article:modified_time" content="2021-03-18T02:54:40.995Z">
+<meta property="article:author" content="薛辛超">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/tree/tree_1.png">
+
+<link rel="canonical" href="http://example.com/2017/06/28/%E5%A4%84%E7%90%86%E6%A0%91%E5%BD%A2%E6%95%B0%E6%8D%AE%E5%92%8C%E9%80%92%E5%BD%92%E7%BB%84%E4%BB%B6/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>处理树形数据和递归组件 | 尖叫蕈的梦</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">尖叫蕈的梦</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2017/06/28/%E5%A4%84%E7%90%86%E6%A0%91%E5%BD%A2%E6%95%B0%E6%8D%AE%E5%92%8C%E9%80%92%E5%BD%92%E7%BB%84%E4%BB%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="薛辛超">
+      <meta itemprop="description" content="每个人的一生中都有很多坎，类似于瓶颈，唯有苦难和坚持才能冲破，坚持会产生自信，苦难会创造机会。一个经过苦难还有自信的人，一定会有更美好的未来。  ——by 狼叔">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="尖叫蕈的梦">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          处理树形数据和递归组件
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2017-06-28 10:09:58" itemprop="dateCreated datePublished" datetime="2017-06-28T10:09:58+08:00">2017-06-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-03-18 10:54:40" itemprop="dateModified" datetime="2021-03-18T10:54:40+08:00">2021-03-18</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>在开发过程中，我们需要开发一个组织结构图，也就是我们常见的tree功能。首先遇到这样的需求，我首先想到的是利用插件 ztree，这是一款比较著名的jquery插件，只要后台返回的数据ok，它就能渲染，然后只需修改样式即可。</p>
+<h3 id="处理后台数据"><a href="#处理后台数据" class="headerlink" title="处理后台数据"></a>处理后台数据</h3><p>首先，我的理想的数据是下面这样的：</p>
+<span id="more"></span>
+
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">[&#123;</span><br><span class="line">    <span class="attr">&quot;id&quot;</span>: <span class="number">1</span>,</span><br><span class="line">    <span class="attr">&quot;label&quot;</span>: <span class="string">&quot;宅客学院&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;infos&quot;</span>: [ ...... ],  <span class="comment">//这里是好多数据</span></span><br><span class="line">    <span class="attr">&quot;children&quot;</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">&quot;id&quot;</span>: <span class="number">3</span>,</span><br><span class="line">            <span class="attr">&quot;label&quot;</span>: <span class="string">&quot;老师1&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;children&quot;</span>: [&#123;</span><br><span class="line">                <span class="attr">&quot;id&quot;</span>: <span class="number">9</span>,</span><br><span class="line">                <span class="attr">&quot;label&quot;</span>: <span class="string">&quot;学生1&quot;</span>,</span><br><span class="line">                <span class="attr">&quot;infos&quot;</span>: [ ...... ]  <span class="comment">//这里是好多数据</span></span><br><span class="line">            &#125;,&#123;</span><br><span class="line">                <span class="attr">&quot;id&quot;</span>: <span class="number">10</span>,</span><br><span class="line">                <span class="attr">&quot;label&quot;</span>: <span class="string">&quot;学生2&quot;</span>,</span><br><span class="line">                <span class="attr">&quot;infos&quot;</span>: [ ...... ]  <span class="comment">//这里是好多数据</span></span><br><span class="line">            &#125; ]</span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">&quot;id&quot;</span>: <span class="number">4</span>,</span><br><span class="line">            <span class="attr">&quot;label&quot;</span>: <span class="string">&quot;老师2&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;children&quot;</span>: [&#123;</span><br><span class="line">                <span class="attr">&quot;id&quot;</span>: <span class="number">11</span>,</span><br><span class="line">                <span class="attr">&quot;label&quot;</span>: <span class="string">&quot;学生3&quot;</span>,</span><br><span class="line">                <span class="attr">&quot;infos&quot;</span>: [ ...... ]  <span class="comment">//这里是好多数据</span></span><br><span class="line">            &#125;,&#123;</span><br><span class="line">                <span class="attr">&quot;id&quot;</span>: <span class="number">12</span>,</span><br><span class="line">                <span class="attr">&quot;label&quot;</span>: <span class="string">&quot;学生4&quot;</span>,</span><br><span class="line">                <span class="attr">&quot;infos&quot;</span>: [ ...... ]  <span class="comment">//这里是好多数据</span></span><br><span class="line">            &#125; ]</span><br><span class="line">        &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;]</span><br></pre></td></tr></table></figure>
+
+<p>然而现实总是残酷的，后端给我的是一个数组，如下图：<br><img src="/images/tree/tree_1.png" alt="avatar"></p>
+<p>它需要我们自己去组成树状数据。<br>首先，它的关联点是，<strong>orgParentId</strong>关联<strong>orgId</strong>，所以逻辑上遍历一个数组，把它添加到它对应的父亲数组里就可以了。</p>
+<p>好吧，上方法，我也是在网上拔下来的：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getTree</span>(<span class="params">data</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> pos = &#123;&#125;;</span><br><span class="line">    <span class="keyword">var</span> tree = [];</span><br><span class="line">    <span class="keyword">var</span> i = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (data.length != <span class="number">0</span>) &#123;  <span class="comment">//首先当data数组长度不是0的时候，进入循环，直到为0才停止循环</span></span><br><span class="line">        <span class="keyword">if</span> (data[i].orgParentId == <span class="number">0</span>) &#123;  <span class="comment">//当orgParentId 是0的时候，将它作为最大的父项。</span></span><br><span class="line">            tree.push(&#123;</span><br><span class="line">                id: data[i].orgId,</span><br><span class="line">                label: data[i].orgName,</span><br><span class="line">                children: [],</span><br><span class="line">                userId: data[i].userId,</span><br><span class="line">                infos: data[i]       <span class="comment">//去除重要的，其他的一股脑的丢进去吧</span></span><br><span class="line">            &#125;);</span><br><span class="line">            pos[data[i].orgId] = [tree.length - <span class="number">1</span>];   <span class="comment">//pos对象里添加id属性,给它赋值了一个数组,</span></span><br><span class="line">            data.splice(i, <span class="number">1</span>);    <span class="comment">//data里删掉这一项</span></span><br><span class="line">            i--;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;   <span class="comment">//如果不是第1项</span></span><br><span class="line">            <span class="keyword">var</span> posArr = pos[data[i].orgParentId];  <span class="comment">//寻找当前这一项的父元素id，有没有在pos里</span></span><br><span class="line">            <span class="keyword">if</span> (posArr != <span class="literal">undefined</span>) &#123;     <span class="comment">//如果有，那么就讲这一项放到tree里。</span></span><br><span class="line">                <span class="keyword">var</span> obj = tree[posArr[<span class="number">0</span>]];</span><br><span class="line">                <span class="keyword">for</span> (<span class="keyword">var</span> j = <span class="number">1</span>; j &lt; posArr.length; j++) &#123;</span><br><span class="line">                    obj = obj.children[posArr[j]];</span><br><span class="line">                &#125;</span><br><span class="line">                obj.children.push(&#123;</span><br><span class="line">                    id: data[i].orgId,</span><br><span class="line">                    label: data[i].orgName,</span><br><span class="line">                    children: [],</span><br><span class="line">                    userId: data[i].userId,</span><br><span class="line">                    infos: data[i]</span><br><span class="line">                &#125;);</span><br><span class="line">                pos[data[i].orgId] = posArr.concat([obj.children.length - <span class="number">1</span>]);</span><br><span class="line">                data.splice(i, <span class="number">1</span>);</span><br><span class="line">                i--;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        i++;</span><br><span class="line">        <span class="keyword">if</span> (i &gt; data.length - <span class="number">1</span>) &#123;</span><br><span class="line">            i = <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> tree;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后返回的tree，就是我们要的，如下图，好开心。<br><img src="/images/tree/tree_2.png" alt="avatar"></p>
+<h3 id="递归组件"><a href="#递归组件" class="headerlink" title="递归组件"></a>递归组件</h3><p>拿到数据后，理论上可以直接用了，然后只要用ztree修改样式即可。但是ztree并不能满足我们的需求，因为我们要求需要在最后第二层里放下所有的子集（怎么解释呢，就是需要把最后的数组循环在一个div里），这样光用ztree无法实现，因为它灵活性不行。</p>
+<p>那只能自己写tree了。在使用vue递归组件之前，我在项目里写死的5层for循环，繁琐不说，代码量看着还特别大。哎~</p>
+<p>利用vue组件的name属性，可以实现模板内递归，这样就省去了好多没用的代码</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">&quot;en&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">&quot;UTF-8&quot;</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">title</span>&gt;</span>Document<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">style</span>&gt;</span></span><br><span class="line">		.Mlf20 &#123;</span><br><span class="line"><span class="css">			<span class="attribute">margin-left</span>: <span class="number">20px</span>;</span></span><br><span class="line">		&#125;</span><br><span class="line">	<span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;app&quot;</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">node-tree</span> <span class="attr">:tree</span>=<span class="string">&quot;item&quot;</span> <span class="attr">v-for</span>=<span class="string">&quot;item in tree&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">node-tree</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"></span><br><span class="line">	<span class="tag">&lt;<span class="name">template</span> <span class="attr">id</span>=<span class="string">&quot;xxx&quot;</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;Mlf20&quot;</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">a</span>&gt;</span>&#123;&#123;tree.label&#125;&#125;<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;Mlf20&quot;</span>&gt;</span></span><br><span class="line">				<span class="tag">&lt;<span class="name">sss</span> <span class="attr">v-if</span>=<span class="string">&quot;tree.children != []&quot;</span> <span class="attr">:tree</span>=<span class="string">&quot;item&quot;</span> <span class="attr">v-for</span>=<span class="string">&quot;item in tree.children&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">sss</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">&quot;https://unpkg.com/vue@2.5.16/dist/vue.js&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="javascript">	Vue.component(<span class="string">&#x27;node-tree&#x27;</span>, &#123;</span></span><br><span class="line"><span class="javascript">		name: <span class="string">&#x27;sss&#x27;</span>,</span></span><br><span class="line"><span class="javascript">		props: [<span class="string">&#x27;tree&#x27;</span>],</span></span><br><span class="line"><span class="javascript">		template: <span class="string">&#x27;#xxx&#x27;</span></span></span><br><span class="line">	&#125;)</span><br><span class="line"><span class="javascript">	<span class="keyword">new</span> Vue(&#123;</span></span><br><span class="line"><span class="javascript">		el: <span class="string">&quot;#app&quot;</span>,</span></span><br><span class="line">		data: &#123;</span><br><span class="line">			tree: [&#123;</span><br><span class="line"><span class="javascript">				label: <span class="string">&#x27;1111&#x27;</span>,</span></span><br><span class="line">				children: [</span><br><span class="line">					&#123;</span><br><span class="line"><span class="javascript">    					label: <span class="string">&#x27;2222&#x27;</span>,</span></span><br><span class="line">    					children:[&#123;</span><br><span class="line"><span class="javascript">    						label:<span class="string">&#x27;3333&#x27;</span></span></span><br><span class="line">    					&#125;]</span><br><span class="line">					&#125;,</span><br><span class="line">					&#123;</span><br><span class="line"><span class="javascript">    					label: <span class="string">&#x27;2222&#x27;</span></span></span><br><span class="line">					&#125;</span><br><span class="line">				]</span><br><span class="line">			&#125;]</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;)</span><br><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>效果如下图：<br><img src="/images/tree/tree_3.png" alt="avatar"></p>
+<p>这样，就可以将刚得到的数据和使用递归组件，进行完美的树形页面开发了。想怎么编辑就怎么编辑</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>这次还是学到了数据的处理和vue组件的递归功能，还是蛮实用的。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2017/06/05/pdf-js%E5%88%9D%E4%BD%93%E9%AA%8C/" rel="prev" title="pdf.js初体验">
+      <i class="fa fa-chevron-left"></i> pdf.js初体验
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2017/08/13/%E6%95%B0%E7%BB%84%E5%8E%BB%E9%87%8D%E7%9A%84%E5%87%A0%E7%A7%8D%E5%8A%9E%E6%B3%95/" rel="next" title="数组去重的几种办法">
+      数组去重的几种办法 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC8zNTIzMC8xMTc2Ng=="></div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%84%E7%90%86%E5%90%8E%E5%8F%B0%E6%95%B0%E6%8D%AE"><span class="nav-number">1.</span> <span class="nav-text">处理后台数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%92%E5%BD%92%E7%BB%84%E4%BB%B6"><span class="nav-number">2.</span> <span class="nav-text">递归组件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">薛辛超</p>
+  <div class="site-description" itemprop="description">每个人的一生中都有很多坎，类似于瓶颈，唯有苦难和坚持才能冲破，坚持会产生自信，苦难会创造机会。一个经过苦难还有自信的人，一定会有更美好的未来。  ——by 狼叔</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">21</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">薛辛超</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+NexT.utils.loadComments(document.querySelector('#lv-container'), () => {
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+});
+</script>
+
+</body>
+</html>

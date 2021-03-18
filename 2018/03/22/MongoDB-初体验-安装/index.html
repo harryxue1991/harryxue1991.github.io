@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="对于数据库我是不太了解的。公司电脑上来就装了MySQL，但是我想装个MongoDB试一下。我们之前公司有个项目开发，后端的同学选择了用MongoDB，虽然不知道有什么区别，但还是感觉好厉害的样子。 首先网上介绍，MongoDB是一个介于关系数据库和非关系数据库之间的产品，是非关系数据库当中功能最丰富，最像关系数据库的。 我在网上也找了关系型数据库和非关系型数据库的特点，优点和缺点，如下表：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MongoDB-初体验-安装">
+<meta property="og:url" content="http://example.com/2018/03/22/MongoDB-%E5%88%9D%E4%BD%93%E9%AA%8C-%E5%AE%89%E8%A3%85/index.html">
+<meta property="og:site_name" content="尖叫蕈的梦">
+<meta property="og:description" content="对于数据库我是不太了解的。公司电脑上来就装了MySQL，但是我想装个MongoDB试一下。我们之前公司有个项目开发，后端的同学选择了用MongoDB，虽然不知道有什么区别，但还是感觉好厉害的样子。 首先网上介绍，MongoDB是一个介于关系数据库和非关系数据库之间的产品，是非关系数据库当中功能最丰富，最像关系数据库的。 我在网上也找了关系型数据库和非关系型数据库的特点，优点和缺点，如下表：">
+<meta property="og:locale">
+<meta property="og:image" content="http://example.com/images/mongodb/mongo_1.png">
+<meta property="og:image" content="http://example.com/images/mongodb/mongo_2.png">
+<meta property="og:image" content="http://example.com/images/mongodb/mongo_3.png">
+<meta property="og:image" content="http://example.com/images/mongodb/mongo_error.png">
+<meta property="og:image" content="http://example.com/images/mongodb/mongo_4.png">
+<meta property="og:image" content="http://example.com/images/mongodb/mongo_5.png">
+<meta property="og:image" content="http://example.com/images/mongodb/mongo_6.png">
+<meta property="og:image" content="http://example.com/images/mongodb/mongo_7.png">
+<meta property="article:published_time" content="2018-03-22T01:37:06.000Z">
+<meta property="article:modified_time" content="2021-03-18T02:54:40.988Z">
+<meta property="article:author" content="薛辛超">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/mongodb/mongo_1.png">
+
+<link rel="canonical" href="http://example.com/2018/03/22/MongoDB-%E5%88%9D%E4%BD%93%E9%AA%8C-%E5%AE%89%E8%A3%85/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>MongoDB-初体验-安装 | 尖叫蕈的梦</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">尖叫蕈的梦</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2018/03/22/MongoDB-%E5%88%9D%E4%BD%93%E9%AA%8C-%E5%AE%89%E8%A3%85/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="薛辛超">
+      <meta itemprop="description" content="每个人的一生中都有很多坎，类似于瓶颈，唯有苦难和坚持才能冲破，坚持会产生自信，苦难会创造机会。一个经过苦难还有自信的人，一定会有更美好的未来。  ——by 狼叔">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="尖叫蕈的梦">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MongoDB-初体验-安装
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-03-22 09:37:06" itemprop="dateCreated datePublished" datetime="2018-03-22T09:37:06+08:00">2018-03-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-03-18 10:54:40" itemprop="dateModified" datetime="2021-03-18T10:54:40+08:00">2021-03-18</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>对于数据库我是不太了解的。公司电脑上来就装了MySQL，但是我想装个MongoDB试一下。我们之前公司有个项目开发，后端的同学选择了用MongoDB，虽然不知道有什么区别，但还是感觉好厉害的样子。</p>
+<p>首先网上介绍，MongoDB是一个介于关系数据库和非关系数据库之间的产品，是非关系数据库当中功能最丰富，最像关系数据库的。</p>
+<p>我在网上也找了关系型数据库和非关系型数据库的特点，优点和缺点，如下表：</p>
+<span id="more"></span>
+
+<table>
+<thead>
+<tr>
+<th>数据库类型</th>
+<th>特性</th>
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>关系型数据库：SQLite、Oracle、mysql</td>
+<td>1、关系型数据库，是指采用了关系模型来组织数据的数据库；2、关系型数据库的最大特点就是事务的一致性；3、简单来说，关系模型指的就是二维表格模型，而一个关系型数据库就是由二维表及其之间的联系所组成的一个数据组织。</td>
+<td>1、容易理解：二维表结构是非常贴近逻辑世界一个概念，关系模型相对网状、层次等其他模型来说更容易理解；2、使用方便：通用的SQL语言使得操作关系型数据库非常方便；3、易于维护：丰富的完整性(实体完整性、参照完整性和用户定义的完整性)大大减低了数据冗余和数据不一致的概率；4、支持SQL，可用于复杂的查询。</td>
+<td>1、为了维护一致性所付出的巨大代价就是其读写性能比较差；2、固定的表结构；3、高并发读写需求；4、海量数据的高效率读写；</td>
+</tr>
+<tr>
+<td>非关系型数据库：MongoDb、redis、HBase</td>
+<td>1、使用键值对存储数据；2、分布式；3、一般不支持ACID特性；4、非关系型数据库严格上不是一种数据库，应该是一种数据结构化存储方法的集合。</td>
+<td>1、无需经过sql层的解析，读写性能很高；2、基于键值对，数据没有耦合性，容易扩展；3、存储数据的格式：nosql的存储格式是key,value形式、文档形式、图片形式等等，文档形式、图片形式等等，而关系型数据库则只支持基础类型。</td>
+<td>1、不提供sql支持，学习和使用成本较高；2、无事务处理，附加功能bi和报表等支持也不好；</td>
+</tr>
+</tbody></table>
+<p>嗯，大致就是这样吧。好了，说了一堆没用的话，我们先吧MongoDB安装上再说。</p>
+<h3 id="MongoDB下载"><a href="#MongoDB下载" class="headerlink" title="MongoDB下载"></a>MongoDB下载</h3><p>打开MongoDB官网：<a target="_blank" rel="noopener" href="https://www.mongodb.com/">https://www.mongodb.com/</a>，找到<strong>Download</strong>，然后下载。</p>
+<p>我这边都是windows系统的我选择winsows版本安装。</p>
+<p>然后下载完后双击安装</p>
+<p><img src="/images/mongodb/mongo_1.png" alt="avatar"></p>
+<p>这里我们选择自定义安装，因为下一步可以调整路径，如下图，自定义一个自己的目录</p>
+<p><img src="/images/mongodb/mongo_2.png" alt="avatar"></p>
+<p>接着继续，这里有个小问题，就是如下图，圈中的那个钩。如果选中的话，那它在安装过程中会给你安装MongoDB compass，如果目前环境网络不好的情况下，建议把它钩掉，不然会很慢很慢，很慢很慢……</p>
+<p><img src="/images/mongodb/mongo_3.png" alt="avatar"></p>
+<p>最后一步步安装完成，点击finish完成即可。</p>
+<h3 id="创建数据目录"><a href="#创建数据目录" class="headerlink" title="创建数据目录"></a>创建数据目录</h3><p>为了方便开发，我将MongoDB的bin目录添加到系统的环境变量里了。怎么添加环境变量，这里我就不多说了。</p>
+<p>完成安装后，还需要创建一个文件夹，将数据库文件存放在那里。具体放哪里，自己喜欢吧，不过目录最好要明确。</p>
+<p>我参考网上的文档，然后在F盘创建了一个文件夹，<strong>F:\data\db</strong>，接着打开shell，试着启动数据库</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mongod --dbpath F:\data\db</span><br></pre></td></tr></table></figure>
+
+<p>然后打开**<a target="_blank" rel="noopener" href="http://localhost:27017/">http://localhost:27017</a>**，发现，报错了。<br><img src="/images/mongodb/mongo_error.png" alt="avatar"></p>
+<p>Σ(⊙▽⊙”a，什么鬼？ssl握手失败，按照步骤我没发现什么问题啊。这个问题确实困扰了我很久，百度了一堆，有人说是mongoDB 3.6版本的问题，降版本就可以了。</p>
+<p>我只好再重新下载个3.4版本的，下载地址：<a target="_blank" rel="noopener" href="https://www.mongodb.org/dl/win32/x86_64-2008plus-ssl">https://www.mongodb.org/dl/win32/x86_64-2008plus-ssl</a></p>
+<p>把旧的卸了，再安装。。。同样的步骤，打开**<a target="_blank" rel="noopener" href="http://localhost:27017/">http://localhost:27017</a>**，如下图，成了！美滋滋<br><img src="/images/mongodb/mongo_4.png" alt="avatar"></p>
+<p>这里说个问题，要是重新打开不行的话，可以吧<strong>F:\data\db</strong>文件夹清空，再重新尝试一下。</p>
+<h3 id="配置本地服务"><a href="#配置本地服务" class="headerlink" title="配置本地服务"></a>配置本地服务</h3><p>像我们刚刚的操作，其实已经成功启动mongoDB了，但是真正开发想用它，会觉得很麻烦，所以我们需要把它配置好才行。</p>
+<p>首先像刚刚一样，在自己确定的文件夹里创建db文件夹，用来存放数据的。<br>再同目录下创建一个logs文件夹，里面创建一个<strong>mongo.log</strong>文件，（配置文件里会指定它）<br>最后再同目录下创建<strong>mongo.conf</strong>配置文件，如下图<br><img src="/images/mongodb/mongo_5.png" alt="avatar"></p>
+<p>配置文件内容：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">#数据库路径</span><br><span class="line">dbpath&#x3D;D:\data\db</span><br><span class="line">#日志输出文件路径</span><br><span class="line">logpath&#x3D;D:\data\logs\mongo.log</span><br><span class="line">#错误日志采用追加模式</span><br><span class="line">logappend&#x3D;true</span><br><span class="line">#启用日志文件，默认启用</span><br><span class="line">journal&#x3D;true</span><br><span class="line">#这个选项可以过滤掉一些无用的日志信息，若需要调试使用请设置为false</span><br><span class="line">quiet&#x3D;true</span><br><span class="line">#端口号 默认为27017</span><br><span class="line">port&#x3D;27017</span><br></pre></td></tr></table></figure>
+
+<p>这些东西准备好了之后，我们在shell命令窗口里，输入：(注意：这里的shell一定要管理员身份运行，win10的小伙伴要win右键，选择带管理员的shell窗口才行，不然添加失败)</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mongod --config <span class="string">&quot;F:\data\mongo.conf&quot;</span> --install --serviceName <span class="string">&quot;MongoDB&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>路径千万别写错了哦。然后我们查看我们的本地的服务<br><img src="/images/mongodb/mongo_6.png" alt="avatar"></p>
+<p>看到服务里面已经有了。那我们输入最后一个命令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">net start MongoDB</span><br></pre></td></tr></table></figure>
+
+<p>如下图，启动成功了。<br><img src="/images/mongodb/mongo_7.png" alt="avatar"></p>
+<p>我们再访问以下<strong><a target="_blank" rel="noopener" href="http://localhost:27017/">http://localhost:27017</a></strong>，美滋滋。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>其实安装MongoDB总体来说还是非常简单的，但是我在安装3.6.3版本的时候报的那个错，还是没有解决，不知道是什么原因。不过降版本后，最后还是完成了，成功启动了数据库。</p>
+<p>好了，简单的安装就到这里了。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/03/02/%E6%88%91%E7%9A%84%E4%BA%BA%E7%94%9F/" rel="prev" title="我的人生">
+      <i class="fa fa-chevron-left"></i> 我的人生
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/05/16/2019%E5%B9%B4%E7%9A%84%E6%84%9F%E6%85%A8/" rel="next" title="2019年的感慨">
+      2019年的感慨 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC8zNTIzMC8xMTc2Ng=="></div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#MongoDB%E4%B8%8B%E8%BD%BD"><span class="nav-number">1.</span> <span class="nav-text">MongoDB下载</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E6%95%B0%E6%8D%AE%E7%9B%AE%E5%BD%95"><span class="nav-number">2.</span> <span class="nav-text">创建数据目录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E6%9C%AC%E5%9C%B0%E6%9C%8D%E5%8A%A1"><span class="nav-number">3.</span> <span class="nav-text">配置本地服务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">薛辛超</p>
+  <div class="site-description" itemprop="description">每个人的一生中都有很多坎，类似于瓶颈，唯有苦难和坚持才能冲破，坚持会产生自信，苦难会创造机会。一个经过苦难还有自信的人，一定会有更美好的未来。  ——by 狼叔</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">21</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">薛辛超</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+NexT.utils.loadComments(document.querySelector('#lv-container'), () => {
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="之前我们构建了简单的webpack2，相信大家可能下载下来试过了。然后一定发现，这个demo1除了能启动预览hello world还能干啥？好吧，简单的webpack肯定是不能满足我们的需求的，所以我们继续构建能能成运行vue2的webpack吧。 增加插件html-webpack-plugin我们为什么要引用它，因为有了它，我们构建的时候，不用在index.html文件里引用添加webapck打">
+<meta property="og:type" content="article">
+<meta property="og:title" content="webpack2-vue2简单构建法（2）">
+<meta property="og:url" content="http://example.com/2017/10/24/webpack2-vue%E7%AE%80%E5%8D%95%E6%9E%84%E5%BB%BA%E6%B3%95%EF%BC%882%EF%BC%89/index.html">
+<meta property="og:site_name" content="尖叫蕈的梦">
+<meta property="og:description" content="之前我们构建了简单的webpack2，相信大家可能下载下来试过了。然后一定发现，这个demo1除了能启动预览hello world还能干啥？好吧，简单的webpack肯定是不能满足我们的需求的，所以我们继续构建能能成运行vue2的webpack吧。 增加插件html-webpack-plugin我们为什么要引用它，因为有了它，我们构建的时候，不用在index.html文件里引用添加webapck打">
+<meta property="og:locale">
+<meta property="og:image" content="http://example.com/images/webpack/webpack_demop2_html.png">
+<meta property="og:image" content="http://example.com/images/webpack/webpack_demop2_html2.png">
+<meta property="article:published_time" content="2017-10-24T07:40:47.000Z">
+<meta property="article:modified_time" content="2021-03-18T02:54:40.994Z">
+<meta property="article:author" content="薛辛超">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/webpack/webpack_demop2_html.png">
+
+<link rel="canonical" href="http://example.com/2017/10/24/webpack2-vue%E7%AE%80%E5%8D%95%E6%9E%84%E5%BB%BA%E6%B3%95%EF%BC%882%EF%BC%89/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>webpack2-vue2简单构建法（2） | 尖叫蕈的梦</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">尖叫蕈的梦</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2017/10/24/webpack2-vue%E7%AE%80%E5%8D%95%E6%9E%84%E5%BB%BA%E6%B3%95%EF%BC%882%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="薛辛超">
+      <meta itemprop="description" content="每个人的一生中都有很多坎，类似于瓶颈，唯有苦难和坚持才能冲破，坚持会产生自信，苦难会创造机会。一个经过苦难还有自信的人，一定会有更美好的未来。  ——by 狼叔">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="尖叫蕈的梦">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          webpack2-vue2简单构建法（2）
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2017-10-24 15:40:47" itemprop="dateCreated datePublished" datetime="2017-10-24T15:40:47+08:00">2017-10-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-03-18 10:54:40" itemprop="dateModified" datetime="2021-03-18T10:54:40+08:00">2021-03-18</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>之前我们构建了简单的webpack2，相信大家可能下载下来试过了。然后一定发现，这个demo1除了能启动预览hello world还能干啥？<br>好吧，简单的webpack肯定是不能满足我们的需求的，所以我们继续构建能能成运行vue2的webpack吧。</p>
+<h3 id="增加插件html-webpack-plugin"><a href="#增加插件html-webpack-plugin" class="headerlink" title="增加插件html-webpack-plugin"></a>增加插件html-webpack-plugin</h3><p>我们为什么要引用它，因为有了它，我们构建的时候，不用在index.html文件里引用添加webapck打包生成的文件了。因为它能自动引入script和link标签。<br>当然它能配置多个html文件入口。这里我就不细讲了，感兴趣的同学可以网上搜索一下。-_-||</p>
+<p>好了，开始下载~~~</p>
+<span id="more"></span>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">npm install html-webpack-plugin --save-dev</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>下载完，配置文件引入。<br><img src="/images/webpack/webpack_demop2_html.png" alt="avatar"><br>然后配置plugins数组，将引入的插件注册<br><img src="/images/webpack/webpack_demop2_html2.png" alt="avatar"><br>这里的new HtmlWebpackPlugin()构造函数，里面的参数是个对象，下面是我从官网摘的</p>
+<table>
+<thead>
+<tr>
+<th>name</th>
+<th>type</th>
+<th>default</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>title</td>
+<td>{String}</td>
+<td>``</td>
+<td>The title to use for the generated HTML document</td>
+</tr>
+<tr>
+<td>filename</td>
+<td>{String}</td>
+<td>‘index.html’</td>
+<td>The file to write the HTML to. Defaults to index.html. You can specify a subdirectory here too (eg: assets/admin.html)</td>
+</tr>
+<tr>
+<td>template</td>
+<td>{String}</td>
+<td>``</td>
+<td>webpack require path to the template. Please see the docs for details</td>
+</tr>
+<tr>
+<td>inject</td>
+<td>{Boolean&#124;String}</td>
+<td>true</td>
+<td>true &#124; ‘head’ &#124; ‘body’ &#124; false Inject all assets into the given template or templateContent. When passing true or ‘body’ all javascript resources will be placed at the bottom of the body element. ‘head’ will place the scripts in the head element</td>
+</tr>
+<tr>
+<td>favicon</td>
+<td>{String}</td>
+<td>``</td>
+<td>Adds the given favicon path to the output HTML</td>
+</tr>
+<tr>
+<td>minify</td>
+<td>{Boolean&#124;Object}</td>
+<td>true</td>
+<td>Pass html-minifier’s options as object to minify the output</td>
+</tr>
+<tr>
+<td>hash</td>
+<td>{Boolean}</td>
+<td>false</td>
+<td>If true then append a unique webpack compilation hash to all included scripts and CSS files. This is useful for cache busting</td>
+</tr>
+<tr>
+<td>cache</td>
+<td>{Boolean}</td>
+<td>true</td>
+<td>Emit the file only if it was changed</td>
+</tr>
+<tr>
+<td>showErrors</td>
+<td>{Boolean}</td>
+<td>true</td>
+<td>Errors details will be written into the HTML page</td>
+</tr>
+<tr>
+<td>chunks</td>
+<td>{?}</td>
+<td>?</td>
+<td>Allows you to add only some chunks (e.g only the unit-test chunk)</td>
+</tr>
+<tr>
+<td>chunksSortMode</td>
+<td>{String&#124;Function}</td>
+<td>auto</td>
+<td>Allows to control how chunks should be sorted before they are included to the HTML. Allowed values are ‘none’ &#124; ‘auto’ &#124; ‘dependency’ &#124; ‘manual’ &#124; {Function}</td>
+</tr>
+<tr>
+<td>excludeChunks</td>
+<td>{String}</td>
+<td>``</td>
+<td>Allows you to skip some chunks (e.g don’t add the unit-test chunk)</td>
+</tr>
+<tr>
+<td>xhtml</td>
+<td>{Boolean}</td>
+<td>false</td>
+<td>If true render the link tags as self-closing (XHTML compliant)</td>
+</tr>
+</tbody></table>
+<p>为了更明显地显示这个插件的功能，这里我们改了我们的模板页面，将index.html改为template.ejs，模板页面内容</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">&quot;en&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">&quot;UTF-8&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">&quot;viewport&quot;</span> <span class="attr">content</span>=<span class="string">&quot;width=device-width, initial-scale=1.0&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">meta</span> <span class="attr">http-equiv</span>=<span class="string">&quot;X-UA-Compatible&quot;</span> <span class="attr">content</span>=<span class="string">&quot;ie=edge&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">title</span>&gt;</span>&lt;%= htmlWebpackPlugin.options.title %&gt;<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;app&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!--assets will be inject bellow--&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>然后，我们需要改一个地方，就是demo1中的output</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">output: &#123;</span><br><span class="line">        path: path.resolve(__dirname, <span class="string">&#x27;/&#x27;</span>),</span><br><span class="line">        publicPath: <span class="string">&#x27;/&#x27;</span>,</span><br><span class="line">        filename: <span class="string">&#x27;[name].[hash:8].js&#x27;</span></span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
+
+<p>这里我们将生成的js用后面的8位hash值命名，这样然后publicPath改为根目录，因为我们想在根目录下预览。</p>
+<h3 id="增加loader，需要预览css和引用图片img"><a href="#增加loader，需要预览css和引用图片img" class="headerlink" title="增加loader，需要预览css和引用图片img"></a>增加loader，需要预览css和引用图片img</h3><p>这里，我们在module.rules:[] 这个数组里面，新填了3个loader，加一个插件extract-text-webpack-plugin<br>这个插件主要将样式单独从js中拎出来，所以我们需要用到它。<br>因为在开发中我遇到了一个问题，当下载完最新版后，启动报错了。<br><strong>chunk.sortModules is not a function</strong><br>所以这里我们下载之前的版本就好用，我也是在别人的博客里找到的</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm i extract-text-webpack-plugin@2.1.2 --save-dev</span><br></pre></td></tr></table></figure>
+<p>然后顺便把后面的需要的包全下载了吧。要是遇到下载出错，可能是网络问题，建议用淘宝镜像下载。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm i node-sass css-loader  style-lodader sass-lodader url-lodader file-loader --save-dev</span><br></pre></td></tr></table></figure>
+
+<p>这里的node-sass其实蛮坑的，需要你配置python，如果你的电脑没有的话，建议装一个，然后添加电脑的环境变量。<br>接着把node-sass删掉重装就可以了</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npm uninstall node-sass</span><br><span class="line">npm install node-sass --save-dev</span><br></pre></td></tr></table></figure>
+
+<p>好啦，到这里，我们再配置loader，插件的话，在后面的plugins内添加注册</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="built_in">module</span>: &#123;</span><br><span class="line">        rules: [</span><br><span class="line">                &#123;</span><br><span class="line">                        test: <span class="regexp">/\.css/</span>,</span><br><span class="line">                        use: ExtractTextPlugin.extract(&#123;</span><br><span class="line">                                use: <span class="string">&#x27;css-loader&#x27;</span></span><br><span class="line">                        &#125;)</span><br><span class="line">                &#125;,</span><br><span class="line">                &#123;</span><br><span class="line">                        test:<span class="regexp">/\.scss$/</span>,</span><br><span class="line">                        use: ExtractTextPlugin.extract(&#123;</span><br><span class="line">                                fallback: <span class="string">&#x27;style-loader&#x27;</span>,</span><br><span class="line">                                use: [<span class="string">&#x27;css-loader&#x27;</span>, <span class="string">&#x27;sass-loader&#x27;</span>]</span><br><span class="line">                        &#125;)</span><br><span class="line">                &#125;,</span><br><span class="line">                &#123;</span><br><span class="line">                        test: <span class="regexp">/\.(png|woff|woff2|eot|ttf|svg|jpg)$/</span>,</span><br><span class="line">                        loader: <span class="string">&#x27;url-loader&#x27;</span>,</span><br><span class="line">                        options: &#123;</span><br><span class="line">                                limit: <span class="number">8192</span></span><br><span class="line">                        &#125;</span><br><span class="line">                &#125;</span><br><span class="line">        ]</span><br><span class="line">&#125;，</span><br><span class="line">plugins: [</span><br><span class="line">        <span class="keyword">new</span> ExtractTextPlugin(<span class="string">&#x27;style.[contenthash:8].css&#x27;</span>)</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+
+<p>写到这里，一个vue基本的开发环境有了。可以参考我的demo2：<a target="_blank" rel="noopener" href="https://github.com/harryxue1991/my_webpack/tree/master/demo2">https://github.com/harryxue1991/my_webpack/tree/master/demo2</a></p>
+<p>好吧，我们把webpack增加了点东西，项目启动，完美。但是打包好像还是有点问题。<br>我们下面再继续探讨</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2017/10/19/webpack2-vue%E7%AE%80%E5%8D%95%E6%9E%84%E5%BB%BA%E6%B3%95%EF%BC%881%EF%BC%89/" rel="prev" title="webpack2-vue2简单构建法（1）">
+      <i class="fa fa-chevron-left"></i> webpack2-vue2简单构建法（1）
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2017/10/25/webpack2-vue%E7%AE%80%E5%8D%95%E6%9E%84%E5%BB%BA%E6%B3%95%EF%BC%883%EF%BC%89/" rel="next" title="webpack2-vue2简单构建法（3）">
+      webpack2-vue2简单构建法（3） <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC8zNTIzMC8xMTc2Ng=="></div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A2%9E%E5%8A%A0%E6%8F%92%E4%BB%B6html-webpack-plugin"><span class="nav-number">1.</span> <span class="nav-text">增加插件html-webpack-plugin</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A2%9E%E5%8A%A0loader%EF%BC%8C%E9%9C%80%E8%A6%81%E9%A2%84%E8%A7%88css%E5%92%8C%E5%BC%95%E7%94%A8%E5%9B%BE%E7%89%87img"><span class="nav-number">2.</span> <span class="nav-text">增加loader，需要预览css和引用图片img</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">薛辛超</p>
+  <div class="site-description" itemprop="description">每个人的一生中都有很多坎，类似于瓶颈，唯有苦难和坚持才能冲破，坚持会产生自信，苦难会创造机会。一个经过苦难还有自信的人，一定会有更美好的未来。  ——by 狼叔</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">21</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">薛辛超</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+NexT.utils.loadComments(document.querySelector('#lv-container'), () => {
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+});
+</script>
+
+</body>
+</html>

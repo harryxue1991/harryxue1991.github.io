@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="在写这篇文章前，先感谢我的同事飞哥。在使用pdf.js前，公司有个需求要求做一个能预览并翻页pdf的页面。在此之前，只用过PDFObject插件，但它的效果并不是很好，最后效果就是一个iframe引用pdf文件，每个浏览器的默认样式都不同，而且还没法调用它浏览器自带的方法（可能是我没找到），总之也弄得我焦头烂额。这时候飞哥将pdf.js推荐给我，并且指导我完成开发，让我获益匪浅。 pdf.js下载">
+<meta property="og:type" content="article">
+<meta property="og:title" content="pdf.js初体验">
+<meta property="og:url" content="http://yoursite.com/2017/06/05/pdf-js初体验/index.html">
+<meta property="og:site_name" content="尖叫蕈的梦">
+<meta property="og:description" content="在写这篇文章前，先感谢我的同事飞哥。在使用pdf.js前，公司有个需求要求做一个能预览并翻页pdf的页面。在此之前，只用过PDFObject插件，但它的效果并不是很好，最后效果就是一个iframe引用pdf文件，每个浏览器的默认样式都不同，而且还没法调用它浏览器自带的方法（可能是我没找到），总之也弄得我焦头烂额。这时候飞哥将pdf.js推荐给我，并且指导我完成开发，让我获益匪浅。 pdf.js下载">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/images/pdfjs/pdfjs_1.png">
+<meta property="og:updated_time" content="2019-06-04T14:10:37.120Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="pdf.js初体验">
+<meta name="twitter:description" content="在写这篇文章前，先感谢我的同事飞哥。在使用pdf.js前，公司有个需求要求做一个能预览并翻页pdf的页面。在此之前，只用过PDFObject插件，但它的效果并不是很好，最后效果就是一个iframe引用pdf文件，每个浏览器的默认样式都不同，而且还没法调用它浏览器自带的方法（可能是我没找到），总之也弄得我焦头烂额。这时候飞哥将pdf.js推荐给我，并且指导我完成开发，让我获益匪浅。 pdf.js下载">
+<meta name="twitter:image" content="http://yoursite.com/images/pdfjs/pdfjs_1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/06/05/pdf-js初体验/">
+
+
+
+
+
+  <title>pdf.js初体验 | 尖叫蕈的梦</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">尖叫蕈的梦</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/05/pdf-js初体验/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="薛辛超">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="尖叫蕈的梦">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">pdf.js初体验</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-05T14:50:12+08:00">
+                2017-06-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>在写这篇文章前，先感谢我的同事飞哥。在使用pdf.js前，公司有个需求要求做一个能预览并翻页pdf的页面。在此之前，只用过PDFObject插件，但它的效果并不是很好，最后效果就是一个iframe引用pdf文件，每个浏览器的默认样式都不同，而且还没法调用它浏览器自带的方法（可能是我没找到），总之也弄得我焦头烂额。<br>这时候飞哥将pdf.js推荐给我，并且指导我完成开发，让我获益匪浅。</p>
+<h3 id="pdf-js下载"><a href="#pdf-js下载" class="headerlink" title="pdf.js下载"></a>pdf.js下载</h3><p>pdf.js 能将pdf渲染成canvas，所以是基于html5平台展示的，现在主流浏览器基本没啥问题。<br>pdf.js 官方演示demo预览: <a href="http://mozilla.github.io/pdf.js/web/viewer.html" target="_blank" rel="noopener">http://mozilla.github.io/pdf.js/web/viewer.html</a><br>pdf.js 官方下载：<a href="http://mozilla.github.io/pdf.js/" target="_blank" rel="noopener">http://mozilla.github.io/pdf.js/</a></p>
+<a id="more"></a>
+<p>下载完成后，解压，看到如下图。<br><img src="/images/pdfjs/pdfjs_1.png" alt="avatar"></p>
+<h3 id="pdf-js-使用"><a href="#pdf-js-使用" class="headerlink" title="pdf.js 使用"></a>pdf.js 使用</h3><p>拿到build 和 web文件夹我们很懵逼(⊙o⊙)…，但是不要慌。打开build里发现有两个文件：<strong>pdf.js</strong> 和 <strong>pdf.worker.js</strong>。这两个文件是最重要的两个文件，一个负责API解析，一个负责核心解析。<br>然后我们再打开web文件夹，里面有个viewer.html文件，于是，我们开心地点开，额，点开后发现pdf并不能预览。<br>因为这个页面需要请求文件，需要在服务器的环境下才能运行。所以我们将build文件夹移到apache服务器的www根目录下（当然随便什么web服务器都行）。<br>双击打开后，pdf能预览了。</p>
+<p>拿到demo后怎样解读呢。其实这个确实挺麻烦的，看<a href="http://mozilla.github.io/pdf.js/examples/" target="_blank" rel="noopener">官方文档</a>呗</p>
+<blockquote>
+<p>我们先写个简单的渲染。</p>
+</blockquote>
+<p>首先，如果只是渲染pdf页面的话，其实只要两个js就可以了。就是<strong>pdf.js</strong> 和 <strong>pdf.worker.js</strong>。按照官方例子。以下是我的demo1，可以在我的github直接下载<a href="https://github.com/harryxue1991/mypdf/tree/master/demo1" target="_blank" rel="noopener">https://github.com/harryxue1991/mypdf/tree/master/demo1</a></p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE html&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">"en"</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">"UTF-8"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"viewport"</span> <span class="attr">content</span>=<span class="string">"width=device-width, initial-scale=1.0"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">meta</span> <span class="attr">http-equiv</span>=<span class="string">"X-UA-Compatible"</span> <span class="attr">content</span>=<span class="string">"ie=edge"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">title</span>&gt;</span>Document<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"viewer"</span> <span class="attr">style</span>=<span class="string">"width: 1000px"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"./pdf.js"</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"text/javascript"</span>&gt;</span></span><br><span class="line"><span class="javascript">        <span class="function"><span class="keyword">function</span> <span class="title">showPdf</span>(<span class="params"></span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">                <span class="keyword">var</span> url = <span class="string">'abc.pdf'</span>;    </span></span><br><span class="line"><span class="javascript">                 <span class="comment">//引用pdf文件</span></span></span><br><span class="line"><span class="javascript">                PDFJS.workerSrc = <span class="string">'./pdf.worker.js'</span>;  </span></span><br><span class="line"><span class="javascript">                 <span class="comment">//引用pdf.worker.js文件</span></span></span><br><span class="line"><span class="javascript">                PDFJS.getDocument(url).then(<span class="function"><span class="keyword">function</span> (<span class="params">pdf</span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">                        <span class="keyword">var</span> viewer = <span class="built_in">document</span>.getElementById(<span class="string">"viewer"</span>);</span></span><br><span class="line"><span class="javascript">                        <span class="comment">//需要渲染的的位置div，这里用了原生方法获取id</span></span></span><br><span class="line"><span class="javascript">                        <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">1</span>; i &lt; pdf.numPages; i++) &#123;  </span></span><br><span class="line"><span class="javascript">                        <span class="comment">//for循环pdf页, 这里的numPages为pdf总页码，因为pdf没有第0页</span></span></span><br><span class="line"><span class="javascript">                        <span class="comment">// 所以我们得从第一页开始渲染</span></span></span><br><span class="line"><span class="javascript">                                pdf.getPage(i).then(<span class="function"><span class="keyword">function</span> (<span class="params">page</span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">                                        <span class="comment">// 如果只是渲染一页的话，这里的getPage()方法传变量</span></span></span><br><span class="line"><span class="javascript">                                        <span class="comment">//然后点击传入所要页面数，页面就会渲染哪一页，非常酷炫</span></span></span><br><span class="line"><span class="javascript">                                        <span class="keyword">var</span> desiredWidth = viewer.clientWidth;</span></span><br><span class="line"><span class="javascript">                                        <span class="comment">//这里设置我们需要渲染出pdf的大小，单位是px，但这里我们不需要写单位。</span></span></span><br><span class="line"><span class="javascript">                                        <span class="keyword">var</span> viewport = page.getViewport(<span class="number">1</span>);</span></span><br><span class="line"><span class="javascript">                                        <span class="comment">//这里传的参数1，主要我想获取我引入pdf的尺寸大小（主要取宽度）</span></span></span><br><span class="line"><span class="javascript">                                        <span class="comment">// 得到的viewport对象，里面就有实际pdf的尺寸</span></span></span><br><span class="line"><span class="javascript">                                        <span class="keyword">var</span> scale = desiredWidth / viewport.width;</span></span><br><span class="line"><span class="javascript">                                        <span class="comment">// 将我需要的尺寸，除以实际尺寸，scale得到比例</span></span></span><br><span class="line"><span class="javascript">                                        <span class="keyword">var</span> scaledViewport = page.getViewport(scale);</span></span><br><span class="line"><span class="javascript">                                        <span class="comment">//将得到的比例再传入这个方法中，告诉pdf.js，我要渲染这么大的</span></span></span><br><span class="line"><span class="javascript">                                        <span class="keyword">var</span> canvas = <span class="built_in">document</span>.createElement(<span class="string">'canvas'</span>);</span></span><br><span class="line"><span class="javascript">                                        <span class="comment">// 创建一个canvas</span></span></span><br><span class="line"><span class="javascript">                                        <span class="keyword">var</span> context = canvas.getContext(<span class="string">'2d'</span>);</span></span><br><span class="line"><span class="javascript">                                        <span class="comment">// canvas基本方法</span></span></span><br><span class="line">                                        canvas.width = viewer.clientWidth;</span><br><span class="line"><span class="javascript">                                        <span class="comment">// 设置canvas的宽</span></span></span><br><span class="line">                                        canvas.height = scaledViewport.height * viewer.clientWidth /</span><br><span class="line">                                                scaledViewport.width;</span><br><span class="line"><span class="javascript">                                        <span class="comment">// 设置canvas的长，按照比例计算就可以了</span></span></span><br><span class="line"><span class="javascript">                                        <span class="keyword">var</span> renderContext = &#123;</span></span><br><span class="line">                                                canvasContext: context,</span><br><span class="line">                                                viewport: scaledViewport</span><br><span class="line">                                        &#125;;</span><br><span class="line"><span class="javascript">                                        <span class="comment">// 创建一个对象，设置属性和值，这些值我们上面都得到了</span></span></span><br><span class="line">                                        page.render(renderContext);</span><br><span class="line"><span class="javascript">                                        <span class="comment">// 然后渲染，这个时候是渲染出canvas标签，我们当然要插入到我们的div里啦，所以还差一步</span></span></span><br><span class="line">                                        viewer.appendChild(canvas);</span><br><span class="line"><span class="javascript">                                        <span class="comment">// 添加进入我们的div里面</span></span></span><br><span class="line">                                &#125;);</span><br><span class="line">                        &#125;</span><br><span class="line">                &#125;)</span><br><span class="line">        &#125;</span><br><span class="line">        showPdf();</span><br><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>上面的代码我做了很详细的注释，细心的同学会发现，咦，这样渲染出的pdf，不能选中文字啊。我想说：是的，这样就只是一个pdf渲染成canvas画布的方法，想要做到和demo一样可以抓取文字，那还需要多做一些。但是我们公司需求只是用来渲染的话，应该是足够了的。</p>
+<blockquote>
+<p>pdf.js高级，文字渲染版</p>
+</blockquote>
+<p>对于上面的简单版，文字渲染版就高级多了。当然并不是我们需要多敲代码，只是我们得多引入js和css。<br>大家还记得上面有个web文件夹吧，它里面存放了一个demo，直接是文字渲染版的，当初飞哥就是从demo里剥离代码的，厉害！<br>我现在重新看一下<strong>viewer.js</strong>中代码，需要将pdf的demo的功能一点点剥掉，真的是很麻烦的一件事。我不知道飞哥是怎么弄的，捂脸笑哭~~。<br>好了，不废话了，上代码。这是demo2，github地址：<a href="https://github.com/harryxue1991/mypdf/tree/master/demo2" target="_blank" rel="noopener">https://github.com/harryxue1991/mypdf/tree/master/demo2</a>，里面的pdf1.html，打开就有效果</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE html&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">"en"</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">"UTF-8"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"viewport"</span> <span class="attr">content</span>=<span class="string">"width=device-width, initial-scale=1.0"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">meta</span> <span class="attr">http-equiv</span>=<span class="string">"X-UA-Compatible"</span> <span class="attr">content</span>=<span class="string">"ie=edge"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span> <span class="attr">href</span>=<span class="string">"./viewer.css"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">title</span>&gt;</span>Document<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"viewer"</span> <span class="attr">style</span>=<span class="string">"width: 1000px"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"./pdf.js"</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"./viewer.js"</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"text/javascript"</span>&gt;</span></span><br><span class="line"><span class="javascript">        <span class="keyword">var</span> _pdf;</span></span><br><span class="line"><span class="javascript">        <span class="keyword">var</span> url = <span class="string">'./abc.pdf'</span>;</span></span><br><span class="line"><span class="javascript">        PDFJS.workerSrc = <span class="string">'./pdf.worker.js'</span>;</span></span><br><span class="line"><span class="javascript">        PDFJS.getDocument(url).then(<span class="function"><span class="keyword">function</span> (<span class="params">pdf</span>) </span>&#123;</span></span><br><span class="line">                _pdf = pdf;</span><br><span class="line"><span class="javascript">                <span class="built_in">console</span>.log(pdf.numPages); <span class="comment">//pdf总页数</span></span></span><br><span class="line"><span class="javascript">        &#125;).then(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span></span><br><span class="line">                showPdfPage(1);</span><br><span class="line"><span class="javascript">                <span class="comment">//所传参数，就是我们需要渲染的页数。注意，参数范围是1-总页数，传参前需要做限制。</span></span></span><br><span class="line">        &#125;);</span><br><span class="line"><span class="javascript">        <span class="function"><span class="keyword">function</span> <span class="title">showPdfPage</span>(<span class="params">pageNum</span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">                <span class="keyword">var</span> container = <span class="built_in">document</span>.getElementById(<span class="string">"viewer"</span>);</span></span><br><span class="line"><span class="javascript">                _pdf.getPage(pageNum).then(<span class="function"><span class="keyword">function</span> (<span class="params">page</span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">                        <span class="keyword">var</span> scale = <span class="number">1</span>;</span></span><br><span class="line"><span class="javascript">                        <span class="keyword">var</span> viewport = page.getViewport(scale);</span></span><br><span class="line"><span class="javascript">                        <span class="comment">// scale还是倍数，先使用1倍获取原文件pdf宽度</span></span></span><br><span class="line">                        scale = container.clientWidth / viewport.width;</span><br><span class="line"><span class="javascript">                        <span class="comment">// 需要页面宽度除以原pdf宽度，获得倍数</span></span></span><br><span class="line"><span class="javascript">                        <span class="keyword">var</span> pageView = <span class="keyword">new</span> PDFPageView(&#123;</span></span><br><span class="line">                                container: container,</span><br><span class="line">                                id: page.pageNumber,</span><br><span class="line">                                scale: scale,</span><br><span class="line">                                defaultViewport: viewport,</span><br><span class="line"><span class="javascript">                                <span class="comment">// renderingQueue: this.renderingQueue,</span></span></span><br><span class="line"><span class="javascript">                                textLayerFactory: <span class="keyword">new</span> DefaultTextLayerFactory(),</span></span><br><span class="line"><span class="javascript">                                annotationLayerFactory: <span class="keyword">new</span> DefaultAnnotationLayerFactory(),</span></span><br><span class="line"><span class="javascript">                                <span class="comment">//enhanceTextSelection: this.enhanceTextSelection,</span></span></span><br><span class="line"><span class="javascript">                                <span class="comment">//renderInteractiveForms: this.renderInteractiveForms,</span></span></span><br><span class="line">                        &#125;);</span><br><span class="line"><span class="javascript">                        <span class="comment">//这个构造函数就是我们引入的viewer.js里定义的。只要将我们获得的参数按照对象形式传入，就可以使用了。</span></span></span><br><span class="line">                        pageView.setPdfPage(page);</span><br><span class="line">                        pageView.draw();</span><br><span class="line">                &#125;);</span><br><span class="line">        &#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>以上是渲染单页的，也是我项目中最常用的，如果想要渲染多页。那就和我的demo1一样，写个for循环就可以了。以下示例：<br>github地址：<a href="https://github.com/harryxue1991/mypdf/tree/master/demo2" target="_blank" rel="noopener">https://github.com/harryxue1991/mypdf/tree/master/demo2</a> ，pdf2.thml就是</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE html&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">"en"</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">"UTF-8"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"viewport"</span> <span class="attr">content</span>=<span class="string">"width=device-width, initial-scale=1.0"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">meta</span> <span class="attr">http-equiv</span>=<span class="string">"X-UA-Compatible"</span> <span class="attr">content</span>=<span class="string">"ie=edge"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span> <span class="attr">href</span>=<span class="string">"./viewer.css"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">title</span>&gt;</span>Document<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"viewer"</span> <span class="attr">style</span>=<span class="string">"width: 1000px"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"./pdf.js"</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"./viewer.js"</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"text/javascript"</span>&gt;</span></span><br><span class="line"><span class="javascript">        <span class="keyword">var</span> url = <span class="string">'./abc.pdf'</span>;</span></span><br><span class="line"><span class="javascript">        <span class="keyword">var</span> container = <span class="built_in">document</span>.getElementById(<span class="string">"viewer"</span>);</span></span><br><span class="line"><span class="javascript">        PDFJS.workerSrc = <span class="string">'./pdf.worker.js'</span>;</span></span><br><span class="line"><span class="javascript">        PDFJS.getDocument(url).then(<span class="function"><span class="keyword">function</span> (<span class="params">pdf</span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">                <span class="keyword">for</span>(<span class="keyword">var</span> i = <span class="number">1</span>; i &lt; pdf.numPages; i++) &#123;</span></span><br><span class="line"><span class="javascript">                        pdf.getPage(i).then(<span class="function"><span class="keyword">function</span> (<span class="params">page</span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">                                <span class="keyword">var</span> scale = <span class="number">1</span>;</span></span><br><span class="line"><span class="javascript">                                <span class="keyword">var</span> viewport = page.getViewport(scale);</span></span><br><span class="line">                                scale = container.clientWidth / viewport.width;</span><br><span class="line"><span class="javascript">                                <span class="keyword">var</span> pageView = <span class="keyword">new</span> PDFPageView(&#123;</span></span><br><span class="line">                                        container: container,</span><br><span class="line">                                        id: page.pageNumber,</span><br><span class="line">                                        scale: scale,</span><br><span class="line">                                        defaultViewport: viewport,</span><br><span class="line"><span class="javascript">                                        textLayerFactory: <span class="keyword">new</span> DefaultTextLayerFactory(),</span></span><br><span class="line"><span class="javascript">                                        annotationLayerFactory: <span class="keyword">new</span> DefaultAnnotationLayerFactory(),</span></span><br><span class="line">                                &#125;);</span><br><span class="line">                                pageView.setPdfPage(page);</span><br><span class="line">                                pageView.draw();</span><br><span class="line">                        &#125;);</span><br><span class="line">                &#125;</span><br><span class="line">        &#125;)        </span><br><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="结尾"><a href="#结尾" class="headerlink" title="结尾"></a>结尾</h3><p>好了，相信看到这里的小朋友，对pdf.js一定也有所了解了，如果只是想简单地渲染，就只需用到我的这几个demo就可以了，如果还需要更多的操作功能，那还是得找文档，或者自己慢慢地去挖掘。<br>学习是一件快乐的事，写到这里，我由衷的感到幸福。(#^.^#)</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/05/14/js常见数组方法/" rel="next" title="js常见数组方法">
+                <i class="fa fa-chevron-left"></i> js常见数组方法
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/06/28/处理树形数据和递归组件/" rel="prev" title="处理树形数据和递归组件">
+                处理树形数据和递归组件 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zNTIzMC8xMTc2Ng=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">薛辛超</p>
+              <p class="site-description motion-element" itemprop="description">每个人的一生中都有很多坎，类似于瓶颈，唯有苦难和坚持才能冲破，坚持会产生自信，苦难会创造机会。一个经过苦难还有自信的人，一定会有更美好的未来。  ——by 狼叔</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">23</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/harryxue1991" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-globe"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.zjy7.top/" title="Bale" target="_blank">Bale</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#pdf-js下载"><span class="nav-number">1.</span> <span class="nav-text">pdf.js下载</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pdf-js-使用"><span class="nav-number">2.</span> <span class="nav-text">pdf.js 使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#结尾"><span class="nav-number">3.</span> <span class="nav-text">结尾</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">薛辛超</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
